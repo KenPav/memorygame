@@ -28,7 +28,7 @@ https://github.com/Team-Code/KA_Offline -->
 
 var waitHere = 0;
 var noHover = color(214, 247, 202);
-var yesHover = color(173, 60, 186);
+var yesHover = color(214, 247, 202);
 var blk = color(0, 0, 0);
 var clkclr = color(240, 166, 158);
 var startTime = 0;

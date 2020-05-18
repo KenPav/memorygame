@@ -129,9 +129,11 @@ var faces = [
 ];
 */
 var im = "p.jpg"
+
 var faces = [];
+println("Here 1", Faces.length);
 for (var i = 0; i < 40; i++) {
-    im = photoLocation+"p"+i+".jpg"
+    im = photoLocation+"p"+i+".jpg";
     println(i, im, faces.length);
     p = loadimage(im);
     faces.push(p);

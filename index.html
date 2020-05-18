@@ -81,7 +81,7 @@ Tile.prototype.isUnderMouse = function(x, y) {
 
 // Declare an array of all possible faces (Min of 32)
 
-
+/*
 i0 = loadImage(photoLocation+"p0.jpg");
 i1 = loadImage(photoLocation+"p1.jpg");
 i2 = loadImage(photoLocation+"p2.jpg");
@@ -127,15 +127,15 @@ i39 = loadImage(photoLocation+"p39.jpg");
 var faces = [
     i0,i1,i2,i3,i4,i5,i6,i7,i8,i9,i10,i11,i12,i13,i14,i15,i16,i17,i18,i19,i20,i21,i22,i23,i24,i25,i26,i27,i28,i29,i30,i31,i32,i33,i34,i35,i36,i37,i38,i39
 ];
+*/
 
-/*
 var faces = [];
-for (i=0; i<40; i++) {
-    println(photolocation+"p"+i+".jpg");
-    p = loadimage(photolocation+"p"+i+".jpg");
+for (var i = 0; i < 40; i++) {
+    println("p"+i+".jpg");
+    p = loadimage("p"+i+".jpg");
     faces.push(p);
 }
-*/
+
 
 tileBack = faces[floor(random(faces.length))]
 

@@ -131,8 +131,8 @@ var faces = [
 
 var faces = [];
 for (var i = 0; i < 40; i++) {
-    println("p"+i+".jpg");
-    im = "p"+i+".jpg"
+    im = photoLocation+"p"+i+".jpg"
+    println(im);
     p = loadimage(im);
     faces.push(p);
 }

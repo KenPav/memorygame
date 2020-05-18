@@ -26,6 +26,7 @@ https://github.com/Team-Code/KA_Offline -->
         
         // ProgramCodeGoesHere
 
+var numberPictures = 40
 var waitHere = 0;
 var noHover = color(214, 247, 202);
 var yesHover = color(214, 247, 202);
@@ -79,58 +80,9 @@ Tile.prototype.isUnderMouse = function(x, y) {
         y >= this.y && y <= this.y + this.width;
 };
 
-// Declare an array of all possible faces (Min of 32)
-
-/*
-i0 = loadImage(photoLocation+"p0.jpg");
-i1 = loadImage(photoLocation+"p1.jpg");
-i2 = loadImage(photoLocation+"p2.jpg");
-i3 = loadImage(photoLocation+"p3.jpg");
-i4 = loadImage(photoLocation+"p4.jpg");
-i5 = loadImage(photoLocation+"p5.jpg");
-i6 = loadImage(photoLocation+"p6.jpg");
-i7 = loadImage(photoLocation+"p7.jpg");
-i8 = loadImage(photoLocation+"p8.jpg");
-i9 = loadImage(photoLocation+"p9.jpg");
-i10 = loadImage(photoLocation+"p10.jpg");
-i11 = loadImage(photoLocation+"p11.jpg");
-i12 = loadImage(photoLocation+"p12.jpg");
-i13 = loadImage(photoLocation+"p13.jpg");
-i14 = loadImage(photoLocation+"p14.jpg");
-i15 = loadImage(photoLocation+"p15.jpg");
-i16 = loadImage(photoLocation+"p16.jpg");
-i17 = loadImage(photoLocation+"p17.jpg");
-i18 = loadImage(photoLocation+"p18.jpg");
-i19 = loadImage(photoLocation+"p19.jpg");
-i20 = loadImage(photoLocation+"p20.jpg");
-i21 = loadImage(photoLocation+"p21.jpg");
-i22 = loadImage(photoLocation+"p22.jpg");
-i23 = loadImage(photoLocation+"p23.jpg");
-i24 = loadImage(photoLocation+"p24.jpg");
-i25 = loadImage(photoLocation+"p25.jpg");
-i26 = loadImage(photoLocation+"p26.jpg");
-i27 = loadImage(photoLocation+"p27.jpg");
-i28 = loadImage(photoLocation+"p28.jpg");
-i29 = loadImage(photoLocation+"p29.jpg");
-i30 = loadImage(photoLocation+"p30.jpg");
-i31 = loadImage(photoLocation+"p31.jpg");
-i32 = loadImage(photoLocation+"p32.jpg");
-i33 = loadImage(photoLocation+"p33.jpg");
-i34 = loadImage(photoLocation+"p34.jpg");
-i35 = loadImage(photoLocation+"p35.jpg");
-i36 = loadImage(photoLocation+"p36.jpg");
-i37 = loadImage(photoLocation+"p37.jpg");
-i38 = loadImage(photoLocation+"p38.jpg");
-i39 = loadImage(photoLocation+"p39.jpg");
-
-
-var faces = [
-    i0,i1,i2,i3,i4,i5,i6,i7,i8,i9,i10,i11,i12,i13,i14,i15,i16,i17,i18,i19,i20,i21,i22,i23,i24,i25,i26,i27,i28,i29,i30,i31,i32,i33,i34,i35,i36,i37,i38,i39
-];
-*/
-
+// "faces" Array will contain "numberPictures" pictures, listed as p??.jpg
 var faces = [];
-for (var i = 0; i < 40; i++) {
+for (var i = 0; i < numberPictures; i++) {
     p = loadImage("p"+i+".jpg");
     faces.push(p);
 }

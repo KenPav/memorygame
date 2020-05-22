@@ -33,13 +33,18 @@ https://github.com/Team-Code/KA_Offline -->
         // ProgramCodeGoesHere
 
         var diameter = 500;
-        var decreaseAmt = 0.02;
+        var decreaseAmt = 0.05;
         var scaleF = 1.0;
         var colorOne = color(0,0,0);
         var colorTwo = color(255,255,255);
         var plusMinus = 1;
         var c1 = 0;
-        var c2 = 255;
+        var c2 = 0;
+        var c3 = 0;
+        var c4 = 255;
+        var c5 = 255;
+        var c6 = 255;
+        var ringCounter = 0;
 
         var drawCircleOne = function(diameter) {
             fill(colorOne);
@@ -270,7 +275,14 @@ https://github.com/Team-Code/KA_Offline -->
                 waitHere = 0;
                 tiles.length = 0;
                 selected.length = 0;
-                tileBack = faces[floor(random(faces.length))]    
+                tileBack = faces[floor(random(faces.length))]
+                ringCounter = 0;
+                plusMinus = 1;
+                numTries = 0;
+                numMatches = 0;
+                flippedTiles = [];
+                DelayStartFC = null;
+
                draw();
             }
             
@@ -431,15 +443,22 @@ https://github.com/Team-Code/KA_Offline -->
                     if (iring<.001) {
                         iring=0;
                         plusMinus = -1;
-                    } else if (iring>1.001) {
+                    } else if (iring>1) {
                         iring=1;
                         plusMinus = 1;
                     }
-                    if (c1<255) {
-                        c1 = c1 + 1;
-                        c2 = c2 - 1;
-                        colorOne = color(c1,c2,c2);
-                        colorTwo = color(c2,c1,c1);
+                    
+                    c1 = floor(random(0,255));
+                    c2 = floor(random(0,255));
+                    c3 = floor(random(0,255));
+                    c4 = floor(random(0,255));
+                    c5 = floor(random(0,255));
+                    c6 = floor(random(0,255));
+                    colorOne = color(c1,c2,c3);
+                    colorTwo = color(c4,c5,c6);
+                    ringCounter ++;
+                    if (ringCounter > 60) {
+                        noLoop();
                     }
 
 

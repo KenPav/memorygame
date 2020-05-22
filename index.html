@@ -26,361 +26,433 @@ https://github.com/Team-Code/KA_Offline -->
         
         // ProgramCodeGoesHere
 
-var numberPictures = 40
-var waitHere = 0;
-var noHover = color(214, 247, 202);
-var yesHover = color(214, 247, 202);
-var blk = color(0, 0, 0);
-var clkclr = color(240, 166, 158);
-var startTime = 0;
-var endTime = 0;
-var k = 0;
-//var photoLocation = "c:/Users/Ken/Documents/Programs/memorygame/Images/"
-var photoLocation = ""
-
-// Array for holding game tiles
-var tiles = [];
-
-// Global config
-var NUM_COLS = 4;
-var NUM_ROWS = 4;
-
-// array to be used for randomizing tile images
-var selected = [];
-
-// Define the Tile function for filling tile array
-var Tile = function(x, y, width, face) {
-    this.x = x;
-    this.y = y;
-    this.width = width;
-    this.face = face;
-    this.isFaceUp = false;
-    this.isMatch = false;
-    this.bkGrnd = noHover;
-};
-
-var sizeFactor = 0.60;
-var shiftFactor = (1.0 - sizeFactor)/2;
-// Define the tile drawing function
-Tile.prototype.draw = function() {
-    fill(this.bkGrnd);
-    strokeWeight(2);
-    rect(this.x, this.y, this.width, this.width, 10);
-    if (this.isFaceUp) {
-        image(this.face, this.x, this.y, this.width, this.width);
-    } else {
-
-        image(tileBack, this.x+this.width*shiftFactor, this.y+this.width*shiftFactor, this.width*sizeFactor, this.width*sizeFactor);
-    }
-};
-
-// Define function to check to see if mouse is over tile
-Tile.prototype.isUnderMouse = function(x, y) {
-    return x >= this.x && x <= this.x + this.width  &&
-        y >= this.y && y <= this.y + this.width;
-};
-
-// "faces" Array will contain "numberPictures" pictures, listed as p??.jpg
-var faces = [];
-for (var i = 0; i < numberPictures; i++) {
-    p = loadImage("p"+i+".jpg");
-    faces.push(p);
-}
-
-
-tileBack = faces[floor(random(faces.length))]
-
-// Make an temporary array which has 2 of each, then randomize it for selection purposes
-var makeArray = function(selected) {
-var possibleFaces = faces.slice(0);
-i=floor(random(possibleFaces.length));
-tileBack = possibleFaces[(i)];
-possibleFaces.splice(i, 1);
-
-    for (var i = 0; i < (NUM_COLS * NUM_ROWS) / 2; i++) {
-        // Randomly pick one from the array of remaining faces
-        var randomInd = floor(random(possibleFaces.length));
-        var face = possibleFaces[randomInd];
-        // Push twice onto array
-        selected.push(face);
-        selected.push(face);
-        // Remove from array
-        possibleFaces.splice(randomInd, 1);
-
-    }
-};
-
-
-// Function to shuffle the elements of array
-var shuffleArray = function(array) {
-    var counter = array.length;
-
-    // While there are elements in the array
-    while (counter > 0) {
-        // Pick a random index
-        var ind = Math.floor(Math.random() * counter);
-        // Decrease counter by 1
-        counter--;
-        // And swap the last element with it
-        var temp = array[counter];
-        array[counter] = array[ind];
-        array[ind] = temp;
-    }
-};
-
-
-// Create the tiles
-var createTiles = function(tiles) {
-    var sz = 0;
-    var gap = 4;
-    var ygap = 0;
-    var xgap = 0;
-    sz = max(NUM_COLS , NUM_ROWS);
-    var i=floor(((width-10)-(gap*(NUM_COLS)))/NUM_COLS);
-    var j=floor(((width-40)-(gap*(NUM_ROWS)))/NUM_ROWS);
-    sz = min(i,j);
-    xgap = (width - (NUM_COLS * (sz+gap)))/2;
-    ygap = ((width-35) - (NUM_ROWS * (sz+gap)))/2;
-    for (var i = 0; i < NUM_COLS; i++) {
-        for (var j = 0; j < NUM_ROWS; j++) {
-            var tileX = i * (sz+gap) + xgap;
-            var tileY = j * (sz+gap) + ygap;
-            var tileFace = selected.pop();
-            var tileWidth = sz;
-            tiles.push(new Tile(tileX, tileY, tileWidth, tileFace));
-        }
-}
-
-background(255, 255, 255);
-
-
-};
-
-var numTries = 0;
-var numMatches = 0;
-var flippedTiles = [];
-var delayStartFC = null;
-
-
-// Function to handle mouse clicked scenarios
-mouseClicked = function() {
-
-// Set Game Parameters and Begin Scenario
-    if(waitHere === 0) {
-        // Check for Row and Column Selection Click   
-
-        for (var i=2; i<9; i++) {
-            if(mouseX>=20+40*(i-2) && mouseX<=20+40*(i-2)+40 && mouseY>=60 && mouseY<=100) {
-                NUM_COLS=i;
-                draw()
-
-            }
-            if(mouseX>=20+40*(i-2) && mouseX<=20+40*(i-2)+40 && mouseY>=160 && mouseY<=200) {
-                NUM_ROWS=i;
-                draw()
-
-            }
-
-        }
-
-        // Check for "Continue" Click if Even Number of Tiles 
-        if(mouseX>=100 && mouseX<=200 && mouseY>=height-40 && mouseY<=height-10  && (NUM_COLS*NUM_ROWS)/2-round((NUM_COLS*NUM_ROWS)/2) === 0) {
-            waitHere = 1;
-            for (i=1; i<10000; i++) {
-            
-            }
-            makeArray(selected);
-            shuffleArray(selected);
-            createTiles(tiles);
-            numTries = 0;
-            numMatches = 0;
-            delayStartFC = null;
-            background(88, 206, 227);
-            // Start Game Timer
-            startTime = millis();
-            draw()
-//            return;
-        }
-        draw()
-//        return;
-    }
-    
-    //Check for "Flip all Tiles" Button
-    if(mouseX>=400 && mouseX<=520 && mouseY>=height-35 &&mouseY<=height-5 && waitHere > 0) {
-        for (var i = 0; i < tiles.length; i++) {
-            var tile = tiles[i];
-            
-            if (!tile.isFaceUp) {
-                tile.isFaceUp = true;
-                flippedTiles.push(tile);
-            } 
-            loop();
-            
-        }        
-    }
+        var canvasSize = 600;
+        size(canvasSize,canvasSize); 
+        frameRate(30);
         
-    // Restart after Finishing Game or "Restart" during game
+        // ProgramCodeGoesHere
 
-    if(mouseX>=290 && mouseX<=380 && mouseY>=height-35 &&mouseY<=height-5 && waitHere > 0) {
-        waitHere = 0;
-        tiles.length = 0;
-        selected.length = 0;
-        tileBack = faces[floor(random(faces.length))]    
-       draw();
-    }
-    
-    // Check Tiles
-    for (var i = 0; i < tiles.length; i++) {
-        var tile = tiles[i];
-        if (tile.isUnderMouse(mouseX, mouseY)) {
-            if (flippedTiles.length < 2 && !tile.isFaceUp) {
-                tile.isFaceUp = true;
-                flippedTiles.push(tile);
-                if (flippedTiles.length === 2) {
-                    numTries++;
-                    if (flippedTiles[0].face === flippedTiles[1].face) {
-                        flippedTiles[0].isMatch = true;
-                        flippedTiles[1].isMatch = true;
-                        flippedTiles.length = 0;
-                        numMatches++;
-                    }
-                    delayStartFC = frameCount;
+        var diameter = 500;
+        var decreaseAmt = 0.02;
+        var scaleF = 1.0;
+        var colorOne = color(0,0,0);
+        var colorTwo = color(255,255,255);
+        var plusMinus = 1;
+        var c1 = 0;
+        var c2 = 255;
+
+        var drawCircleOne = function(diameter) {
+            fill(colorOne);
+            ellipse(0,0,diameter,diameter);
+        };
+
+        var drawCircleTwo = function(diameter) {
+            fill(colorTwo);
+            ellipse(0,0,diameter,diameter);
+                
+        };
+
+        var drawCircle = function(scaleTarget) {
+            scaleF = 1.0;
+            while (scaleF>scaleTarget) {
+                pushMatrix();
+                translate(canvasSize/2,canvasSize/2);
+                scale(scaleF);
+                drawCircleTwo(diameter);
+                popMatrix();
+                scaleF = scaleF - decreaseAmt;
+
+                pushMatrix();
+                translate(canvasSize/2,canvasSize/2);
+                scale(scaleF);
+                drawCircleOne(diameter);
+                popMatrix();
+                scaleF = scaleF - decreaseAmt;
+            }
+        };
+
+        var numberPictures = 40
+        var waitHere = 0;
+        var noHover = color(214, 247, 202);
+        var yesHover = color(214, 247, 202);
+        var blk = color(0, 0, 0);
+        var clkclr = color(240, 166, 158);
+        var startTime = 0;
+        var endTime = 0;
+        var k = 0;
+        //var photoLocation = "c:/Users/Ken/Documents/Programs/memorygame/Images/"
+        var photoLocation = ""
+
+        // Array for holding game tiles
+        var tiles = [];
+
+        // Global config
+        var NUM_COLS = 4;
+        var NUM_ROWS = 4;
+
+        // array to be used for randomizing tile images
+        var selected = [];
+
+        // Define the Tile function for filling tile array
+        var Tile = function(x, y, width, face) {
+            this.x = x;
+            this.y = y;
+            this.width = width;
+            this.face = face;
+            this.isFaceUp = false;
+            this.isMatch = false;
+            this.bkGrnd = noHover;
+        };
+
+        var sizeFactor = 0.60;
+        var shiftFactor = (1.0 - sizeFactor)/2;
+        // Define the tile drawing function
+        Tile.prototype.draw = function() {
+            fill(this.bkGrnd);
+            strokeWeight(2);
+            rect(this.x, this.y, this.width, this.width, 10);
+            if (this.isFaceUp) {
+                image(this.face, this.x, this.y, this.width, this.width);
+            } else {
+
+                image(tileBack, this.x+this.width*shiftFactor, this.y+this.width*shiftFactor, this.width*sizeFactor, this.width*sizeFactor);
+            }
+        };
+
+        // Define function to check to see if mouse is over tile
+        Tile.prototype.isUnderMouse = function(x, y) {
+            return x >= this.x && x <= this.x + this.width  &&
+                y >= this.y && y <= this.y + this.width;
+        };
+
+        // "faces" Array will contain "numberPictures" pictures, listed as p??.jpg
+        var faces = [];
+        for (var i = 0; i < numberPictures; i++) {
+            p = loadImage("p"+i+".jpg");
+            faces.push(p);
+        }
+
+
+        tileBack = faces[floor(random(faces.length))]
+
+        // Make an temporary array which has 2 of each, then randomize it for selection purposes
+        var makeArray = function(selected) {
+        var possibleFaces = faces.slice(0);
+        i=floor(random(possibleFaces.length));
+        tileBack = possibleFaces[(i)];
+        possibleFaces.splice(i, 1);
+
+            for (var i = 0; i < (NUM_COLS * NUM_ROWS) / 2; i++) {
+                // Randomly pick one from the array of remaining faces
+                var randomInd = floor(random(possibleFaces.length));
+                var face = possibleFaces[randomInd];
+                // Push twice onto array
+                selected.push(face);
+                selected.push(face);
+                // Remove from array
+                possibleFaces.splice(randomInd, 1);
+
+            }
+        };
+
+
+        // Function to shuffle the elements of array
+        var shuffleArray = function(array) {
+            var counter = array.length;
+
+            // While there are elements in the array
+            while (counter > 0) {
+                // Pick a random index
+                var ind = Math.floor(Math.random() * counter);
+                // Decrease counter by 1
+                counter--;
+                // And swap the last element with it
+                var temp = array[counter];
+                array[counter] = array[ind];
+                array[ind] = temp;
+            }
+        };
+
+
+        // Create the tiles
+        var createTiles = function(tiles) {
+            var sz = 0;
+            var gap = 4;
+            var ygap = 0;
+            var xgap = 0;
+            sz = max(NUM_COLS , NUM_ROWS);
+            var i=floor(((width-10)-(gap*(NUM_COLS)))/NUM_COLS);
+            var j=floor(((width-40)-(gap*(NUM_ROWS)))/NUM_ROWS);
+            sz = min(i,j);
+            xgap = (width - (NUM_COLS * (sz+gap)))/2;
+            ygap = ((width-35) - (NUM_ROWS * (sz+gap)))/2;
+            for (var i = 0; i < NUM_COLS; i++) {
+                for (var j = 0; j < NUM_ROWS; j++) {
+                    var tileX = i * (sz+gap) + xgap;
+                    var tileY = j * (sz+gap) + ygap;
+                    var tileFace = selected.pop();
+                    var tileWidth = sz;
+                    tiles.push(new Tile(tileX, tileY, tileWidth, tileFace));
                 }
-            } 
-            loop();
-        }
-    }
-};
-
-//Starting page for selecting grid size
-var startPage = function() {
-    background(88, 206, 227);
-
-    textSize(20);
-    fill(blk);
-    textAlign(CENTER);
-    text("Number of Columns (2-8) : ",150,40);
-    text("Number of Rows (2-8)      : ",150,140);
-
-    // Check for Even Number of Tiles
-    if((NUM_COLS*NUM_ROWS)/2-round((NUM_COLS*NUM_ROWS)/2) === 0) {
-        text("Click Continue Button to Start",150,height-50);
-        fill(clkclr);
-        rect(100,height-40,100,30);
-        fill(blk);
-        text("Continue", 150,height-17);
-
-    } else {
-        fill(255, 0, 0);
-        text("Number of Rows x Number of Columns\nMust be an Even Number!\n(Not 3x3,3x5,3x7,5x5,5x7, or 7x7)",200,250);
-        fill(blk);
-    }    
-    stroke(blk);
-    strokeWeight(2);
-    for (var i=2; i<9; i++) {
-        fill(noHover);
-        if (i===NUM_COLS) {
-            fill(clkclr);
-        }
-        rect(20+40*(i-2),60,40,40);
-        fill(blk);
-        text(i,40+(i-2)*40,88);
-
-        fill(noHover);
-        if (i===NUM_ROWS) {
-            fill(clkclr);
-        }
-        rect(20+40*(i-2),160,40,40);
-        fill(blk);
-        text(i,40+(i-2)*40,188);
-    }
-// display all photos
-
-        for (var i=0; i<faces.length; i++) {
-            if (i<10) {
-                j=i;
-                k=360;
             }
-            if (i>=10 && i<20) {
-                j=i-10;
-                k=420;
-            }
-            if (i>=20 && i<30) {
-                j=i-20;
-                k=480;
-            }
-            if (i>=30 && i<40) {
-                j=i-30;
-                k=540;
-            }
-            image(faces[i], k,j*60,58,58);
-        }
+
+            background(255, 255, 255);
 
 
-};
+        };
 
-draw = function() {
-    // If just starting, go to startPage function
-    if (waitHere === 0) {
-        startPage();
-    // otherwise play game
-    } else {
-        background(255, 255, 255);
-        if (delayStartFC && (frameCount - delayStartFC) > 30) {
+        var numTries = 0;
+        var numMatches = 0;
+        var flippedTiles = [];
+        var delayStartFC = null;
+
+
+        // Function to handle mouse clicked scenarios
+        mouseClicked = function() {
+
+        // Set Game Parameters and Begin Scenario
+            if(waitHere === 0) {
+                // Check for Row and Column Selection Click   
+
+                for (var i=2; i<9; i++) {
+                    if(mouseX>=20+40*(i-2) && mouseX<=20+40*(i-2)+40 && mouseY>=60 && mouseY<=100) {
+                        NUM_COLS=i;
+                        draw()
+
+                    }
+                    if(mouseX>=20+40*(i-2) && mouseX<=20+40*(i-2)+40 && mouseY>=160 && mouseY<=200) {
+                        NUM_ROWS=i;
+                        draw()
+
+                    }
+
+                }
+
+                // Check for "Continue" Click if Even Number of Tiles 
+                if(mouseX>=100 && mouseX<=200 && mouseY>=height-40 && mouseY<=height-10  && (NUM_COLS*NUM_ROWS)/2-round((NUM_COLS*NUM_ROWS)/2) === 0) {
+                    waitHere = 1;
+                    for (i=1; i<10000; i++) {
+                    
+                    }
+                    makeArray(selected);
+                    shuffleArray(selected);
+                    createTiles(tiles);
+                    numTries = 0;
+                    numMatches = 0;
+                    delayStartFC = null;
+                    background(88, 206, 227);
+                    // Start Game Timer
+                    startTime = millis();
+                    draw()
+        //            return;
+                }
+                draw()
+        //        return;
+            }
+            
+            //Check for "Flip all Tiles" Button
+            if(mouseX>=400 && mouseX<=520 && mouseY>=height-35 &&mouseY<=height-5 && waitHere > 0) {
+                for (var i = 0; i < tiles.length; i++) {
+                    var tile = tiles[i];
+                    
+                    if (!tile.isFaceUp) {
+                        tile.isFaceUp = true;
+                        flippedTiles.push(tile);
+                    } 
+                    loop();
+                    
+                }        
+            }
+                
+            // Restart after Finishing Game or "Restart" during game
+
+            if(mouseX>=290 && mouseX<=380 && mouseY>=height-35 &&mouseY<=height-5 && waitHere > 0) {
+                waitHere = 0;
+                tiles.length = 0;
+                selected.length = 0;
+                tileBack = faces[floor(random(faces.length))]    
+               draw();
+            }
+            
+            // Check Tiles
             for (var i = 0; i < tiles.length; i++) {
                 var tile = tiles[i];
-                if (!tile.isMatch) {
-                    tile.isFaceUp = false;
+                if (tile.isUnderMouse(mouseX, mouseY)) {
+                    if (flippedTiles.length < 2 && !tile.isFaceUp) {
+                        tile.isFaceUp = true;
+                        flippedTiles.push(tile);
+                        if (flippedTiles.length === 2) {
+                            numTries++;
+                            if (flippedTiles[0].face === flippedTiles[1].face) {
+                                flippedTiles[0].isMatch = true;
+                                flippedTiles[1].isMatch = true;
+                                flippedTiles.length = 0;
+                                numMatches++;
+                            }
+                            delayStartFC = frameCount;
+                        }
+                    } 
+                    loop();
                 }
             }
-            flippedTiles = [];
-            delayStartFC = null;
-        }
-    
-    // Change tile color when mouse is overhead
-        for (var i = 0; i < tiles.length; i++) {
-            if (tiles[i].isUnderMouse(mouseX,mouseY)) {
-                tiles[i].bkGrnd = yesHover;
+        };
+
+        //Starting page for selecting grid size
+        var startPage = function() {
+            background(88, 206, 227);
+
+            textSize(20);
+            fill(blk);
+            textAlign(CENTER);
+            text("Number of Columns (2-8) : ",150,40);
+            text("Number of Rows (2-8)      : ",150,140);
+
+            // Check for Even Number of Tiles
+            if((NUM_COLS*NUM_ROWS)/2-round((NUM_COLS*NUM_ROWS)/2) === 0) {
+                text("Click Continue Button to Start",150,height-50);
+                fill(clkclr);
+                rect(100,height-40,100,30);
+                fill(blk);
+                text("Continue", 150,height-17);
+
             } else {
-                tiles[i].bkGrnd = noHover;
-            }
-            if (tiles[i].isFaceUp && !tiles[i].isMatch) {
-                tiles[i].bkGrnd = yesHover;
-            }
-            tiles[i].draw();
-            fill(184, 44, 58);
-            rect(290,height-35,90,30);
-            fill(0,0,0);
-            textSize(20);
-            text("Restart",335,height-15);
+                fill(255, 0, 0);
+                text("Number of Rows x Number of Columns\nMust be an Even Number!\n(Not 3x3,3x5,3x7,5x5,5x7, or 7x7)",200,250);
+                fill(blk);
+            }    
+            stroke(blk);
+            strokeWeight(2);
+            for (var i=2; i<9; i++) {
+                fill(noHover);
+                if (i===NUM_COLS) {
+                    fill(clkclr);
+                }
+                rect(20+40*(i-2),60,40,40);
+                fill(blk);
+                text(i,40+(i-2)*40,88);
 
-            fill(184, 44, 58);
-            rect(400,height-35,120,30);
-            fill(0,0,0);
-            textSize(20);
-            text("Flip all Tiles",460,height-15);
-
-        }
-    
-    // Has game been completed?
-        if (numMatches === tiles.length/2) {
-            fill(0, 0, 0);
-            textSize(15);
-            // Calculate Game Time
-            if(endTime === 0) {
-                endTime = round((millis() - startTime)/1000);
+                fill(noHover);
+                if (i===NUM_ROWS) {
+                    fill(clkclr);
+                }
+                rect(20+40*(i-2),160,40,40);
+                fill(blk);
+                text(i,40+(i-2)*40,188);
             }
-            text("Completed! : " + numTries + " moves / "+ endTime + " seconds", 140, height-15);
-            fill(184, 44, 58);
-            rect(290,height-35,90,30);
-            fill(0,0,0);
-            textSize(20);
-            text("Continue",335,height-15);
-            waitHere = 2;
-            noLoop();
-        }
-    }
-};
+        // display all photos
+
+                for (var i=0; i<faces.length; i++) {
+                    if (i<10) {
+                        j=i;
+                        k=360;
+                    }
+                    if (i>=10 && i<20) {
+                        j=i-10;
+                        k=420;
+                    }
+                    if (i>=20 && i<30) {
+                        j=i-20;
+                        k=480;
+                    }
+                    if (i>=30 && i<40) {
+                        j=i-30;
+                        k=540;
+                    }
+                    image(faces[i], k,j*60,58,58);
+                }
+
+
+        };
+        var iring = 1;
+        draw = function() {
+            // If just starting, go to startPage function
+            if (waitHere === 0) {
+                startPage();
+            // otherwise play game
+            } else {
+                background(255, 255, 255);
+                if (delayStartFC && (frameCount - delayStartFC) > 30) {
+                    for (var i = 0; i < tiles.length; i++) {
+                        var tile = tiles[i];
+                        if (!tile.isMatch) {
+                            tile.isFaceUp = false;
+                        }
+                    }
+                    flippedTiles = [];
+                    delayStartFC = null;
+                }
+            
+            // Change tile color when mouse is overhead
+                for (var i = 0; i < tiles.length; i++) {
+                    if (tiles[i].isUnderMouse(mouseX,mouseY)) {
+                        tiles[i].bkGrnd = yesHover;
+                    } else {
+                        tiles[i].bkGrnd = noHover;
+                    }
+                    if (tiles[i].isFaceUp && !tiles[i].isMatch) {
+                        tiles[i].bkGrnd = yesHover;
+                    }
+                    tiles[i].draw();
+                    fill(184, 44, 58);
+                    rect(290,height-35,90,30);
+                    fill(0,0,0);
+                    textSize(20);
+                    text("Restart",335,height-15);
+
+                    fill(184, 44, 58);
+                    rect(400,height-35,120,30);
+                    fill(0,0,0);
+                    textSize(20);
+                    text("Flip all Tiles",460,height-15);
+
+                }
+            
+            // Has game been completed?
+                if (numMatches === tiles.length/2) {
+                    fill(0, 0, 0);
+                    textSize(15);
+                    // Calculate Game Time
+                    if(endTime === 0) {
+                        endTime = round((millis() - startTime)/1000);
+                    }
+
+
+                    iring = iring - decreaseAmt * 2 * plusMinus;
+                    drawCircle(iring);
+                    fill(0,0,0);
+                    textAlign(CENTER);
+                    textSize(60);
+                    text("You Win!!!",width/2,height/2);
+                    textSize(50);
+                    text("Completed in:", width/2, (height/2)+50);
+                    text(numTries + " Moves  &", width/2, (height/2)+100);
+                    text(endTime + " Seconds", width/2, (height/2)+150);
+
+                    if (iring<.001) {
+                        iring=0;
+                        plusMinus = -1;
+                    } else if (iring>1.001) {
+                        iring=1;
+                        plusMinus = 1;
+                    }
+                    if (c1<255) {
+                        c1 = c1 + 1;
+                        c2 = c2 - 1;
+                        colorOne = color(c1,c2,c2);
+                        colorTwo = color(c2,c1,c1);
+                    }
+
+
+                    fill(184, 44, 58);
+                    rect(290,height-35,90,30);
+                    fill(0,0,0);
+                    textSize(20);
+                    text("Continue",335,height-15);
+                    waitHere = 2;
+//                    noLoop();
+                }
+            }
+        };
 
 //noLoop();
 

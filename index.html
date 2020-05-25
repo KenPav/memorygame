@@ -434,11 +434,11 @@ https://github.com/Team-Code/KA_Offline -->
                     fill(0,0,0);
                     textAlign(CENTER);
                     textSize(60);
-                    text("You Win!!!",width/2,height/2);
+                    text("You Win!!!",width/2,(height/2)-50);
                     textSize(50);
-                    text("Completed in:", width/2, (height/2)+50);
-                    text(numTries + " Moves  &", width/2, (height/2)+100);
-                    text(endTime + " Seconds", width/2, (height/2)+150);
+                    text("Completed in:", width/2, (height/2));
+                    text(numTries + " Moves  &", width/2, (height/2)+50);
+                    text(endTime + " Seconds", width/2, (height/2)+100);
 
                     if (iring<.001) {
                         iring=0;
@@ -457,6 +457,12 @@ https://github.com/Team-Code/KA_Offline -->
                     colorOne = color(c1,c2,c3);
                     colorTwo = color(c4,c5,c6);
                     ringCounter ++;
+                    if (ringCounter > 59) {
+                        c1 = 25;
+                        c2 = 255;
+                        c3 = 25;
+                        colorOne = color(c1,c2,c3);
+                    }
                     if (ringCounter > 60) {
                         noLoop();
                     }
